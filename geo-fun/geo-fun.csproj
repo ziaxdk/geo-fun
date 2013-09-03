@@ -128,16 +128,9 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Content Include="Content\images\layers-2x.png" />
-    <Content Include="Content\images\layers.png" />
-    <Content Include="Content\images\marker-icon-2x.png" />
-    <Content Include="Content\images\marker-icon.png" />
-    <Content Include="Content\images\marker-shadow.png" />
-    <Content Include="Content\leaflet.css" />
-    <Content Include="Content\leaflet.ie.css" />
+    <Content Include="css.css" />
     <Content Include="Global.asax" />
-    <Content Include="Scripts\leaflet-0.6.2.js" />
-    <Content Include="Scripts\leaflet-0.6.2.min.js" />
+    <Content Include="script.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -155,6 +148,14 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="css.min.css" />
+    <None Include="Properties\PublishProfiles\test.pubxml" />
+    <Content Include="script.min.js" />
+    <Content Include="script.min.js.map">
+      <DependentUpon>script.js</DependentUpon>
+    </Content>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
