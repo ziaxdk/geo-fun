@@ -1,0 +1,115 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html ng-app="geofun">
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <script src="//cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
+    <script src="//code.angularjs.org/1.2.0rc1/angular.js"></script>
+    <script src="//code.angularjs.org/1.2.0rc1/angular-animate.js"></script>
+
+    <link rel="stylesheet" href="//cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
+    <!--[if lte IE 8]>
+        <link rel="stylesheet" href="//cdn.leafletjs.com/leaflet-0.6.4/leaflet.ie.css" />
+    <![endif]-->
+    <style type="text/css">
+      .leaflet-info {
+          position: absolute;
+          right: 10px;
+          top: 10px;
+          width: 180px;
+          height: 100px;
+          border: 1px solid #555;
+          border-radius: 12px;
+          background-color: white;
+      }
+
+      .leaflet-info ul, .leaflet-info ul li {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+          font-size: 30px;
+          line-height: 3em;
+          opacity: 1;
+          text-align: center;
+      }
+
+      .animate-took.ng-enter,
+      .animate-took.ng-leave,
+      .animate-took.ng-move {
+        -webkit-transition:all linear 0.5s;
+        -moz-transition:all linear 0.5s;
+        -o-transition:all linear 0.5s;
+        transition:all linear 0.5s;
+      }
+       
+      .animate-took.ng-enter {
+        line-height:0;
+        opacity:0;
+      }
+      .animate-took.ng-enter.ng-enter-active {
+        line-height:3em;
+        opacity:1;
+      }
+      .animate-took.ng-leave {
+        opacity:1;
+        line-height:3em;
+      }
+      .animate-took.ng-leave.ng-leave-active {
+        opacity:0;
+        line-height:0;
+      }
+    </style>
+</head>
+<body ng-controller="c as c">
+    <div id="map" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0">
+    </div>
+    <div id="infobox" class="leaflet-info">
+        <ul>
+            <li class="animate-took" ng-repeat="m in c.msg track by m.id">{{m.val}} ms</li>
+        </ul>
+    </div>
+    <script type="text/javascript">
+        (function () {
+            var m = angular.module('geofun', ['ngAnimate']);
+
+            m.controller("c", function ($scope, $http) {
+                var t = this;
+
+
+                t.latLon = null;
+                t.msg = [];
+
+                var map = L.map('map').setView([56, 11], 8);
+                L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
+                map.on('click', function (e) {
+                    $scope.$apply(function () {
+                        t.latLon = e.latlng;
+                    });
+                });
+
+                var jsonGroup = L.featureGroup().addTo(map);
+                var num = 1;
+
+                $scope.$watch(function () { return t.latLon }, function (n, o) {
+                    if (!n) return;
+                    $http.get('/api/geo', { params: { lat: n.lat, lon: n.lng } }).then(function (res) {
+                        var data = res.data;
+                        t.msg.splice(0, 1, {id: num++, val: data.stats.took});
+                        if (!data.res) return;
+                        L.geoJson(data.res.polygon, {}).bindPopup(data.res.nr + ' ' + data.res.navn).addTo(jsonGroup);
+                    });
+                });
+            });
+
+
+        }());
+
+
+    </script>
+</body>
+</html>
